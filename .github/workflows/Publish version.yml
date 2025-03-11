@@ -2,15 +2,16 @@ name: Publish version
 
 on:
   workflow_dispatch:
+env:
+  MYUSER: ${{ vars.MYUSER }}
+  MYEMAIL: ${{ vars.MYEMAIL }}
+  MYPAT: ${{ secrets.MYPAT }}
 jobs:
   testflight:
     name: Publish libraries
-    runs-on: [macos-12]
+    runs-on: macos-latest
     timeout-minutes: 90
-    env:
-      MYUSER: ${{ secrets.MYUSER }}
-      MYPAT: ${{ secrets.MYPAT }}
-      DEVELOPER_DIR: /Applications/Xcode_14.2.app/Contents/Developer
+
     if: github.ref == 'refs/heads/main'
     steps:
       - name: Checkout
@@ -29,17 +30,20 @@ jobs:
         uses: extractions/netrc@v1
         with:
           machine: github.com
-          username: ${{ secrets.MYUSER }}
-          password: ${{ secrets.MYPAT }}
+          username: ${{ env.MYUSER }}
+          password: ${{ env.MYPAT }}
 
       - name: Github config
         run: |
             git config --global user.name "${{ env.MYUSER }}"
-            git config --global user.email "YOUREMAIL@YOURDOMAIN.COM"
+            git config --global user.email "${{ env.MYEMAIL }}"
             git checkout -b main
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
       - name: Publish version
-        run:  ./gradlew publishPlatforms
+        run:  ./gradlew publishAllPublicationsToGithubPackagesRepository
+
+      - name: Create tag
+        run:  ./gradlew createTag

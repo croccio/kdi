@@ -1,4 +1,4 @@
-import org.gradle.api.tasks.testing.logging.TestExceptionFormat
+import org.gradle.kotlin.dsl.support.kotlinCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 var androidTarget: String = ""
@@ -8,7 +8,7 @@ plugins {
     alias(libs.plugins.kotlinCocoapods)
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.kover)
-    id("maven-publish")
+    alias(libs.plugins.vanniktech.mavenPublish)
 }
 
 group = libs.versions.library.group.get()
@@ -23,6 +23,7 @@ kotlin {
                 }
             }
         }
+        publishLibraryVariants("release", "debug")
     }
     iosX64()
     iosArm64()
@@ -82,12 +83,16 @@ android {
     testOptions {
         unitTests.isReturnDefaultValues = true
     }
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
 }
 
 publishing {
     repositories {
         maven {
-            name = "github"
+            name = "githubPackages"
             url = uri("https://maven.pkg.github.com/croccio/KDI-Kotlin-Dependency-Injection")
             credentials {
                 username = System.getenv()["MYUSER"]
@@ -95,100 +100,50 @@ publishing {
             }
         }
     }
-    val thePublications = listOf(androidTarget) + "kotlinMultiplatform"
-    publications {
-        matching { it.name in thePublications }.all {
-            val targetPublication = this@all
-            tasks.withType<AbstractPublishToMaven>()
-                .matching { it.publication == targetPublication }
-                .configureEach { onlyIf { findProperty("isMainHost") == "true" } }
-        }
-        matching { it.name.contains("ios", true) }.all {
-            val targetPublication = this@all
-            tasks.withType<AbstractPublishToMaven>()
-                .matching { it.publication == targetPublication }
-                .forEach { it.enabled = false }
-        }
-    }
 }
 
-afterEvaluate {
-    tasks.named("podPublishDebugXCFramework") {
-        enabled = false
-    }
-    tasks.named("podSpecDebug") {
-        enabled = false
-    }
-    tasks.withType<JavaCompile>().configureEach {
-        sourceCompatibility = JavaVersion.VERSION_17.toString()
-        targetCompatibility = JavaVersion.VERSION_17.toString()
-    }
-    tasks.withType<AbstractTestTask>().configureEach {
-        testLogging {
-            exceptionFormat = TestExceptionFormat.FULL
-            events("started", "skipped", "passed", "failed")
-            showStandardStreams = true
-        }
-    }
-}
-
-val buildIdAttribute = Attribute.of("buildIdAttribute", String::class.java)
-configurations.forEach {
-    it.attributes {
-        attribute(buildIdAttribute, it.name)
-    }
-}
-
-val moveIosPodToRoot by tasks.registering {
-    group = libs.versions.library.group.get()
-    doLast {
-        val releaseDir = rootProject.file(
-            "./release"
-        )
-        releaseDir.copyRecursively(
-            rootProject.file("./"),
-            true
-        )
-        releaseDir.deleteRecursively()
-    }
-}
-
-tasks.named("podPublishReleaseXCFramework") {
-    finalizedBy(moveIosPodToRoot)
-}
-
-val publishPlatforms by tasks.registering {
-    group = libs.versions.library.group.get()
-    dependsOn(
-        tasks.named("publishAndroidReleasePublicationToGithubRepository"),
-        tasks.named("podPublishReleaseXCFramework")
+mavenPublishing {
+    coordinates(
+        groupId = libs.versions.library.group.get(),
+        artifactId = "kdi",
+        version = libs.versions.library.version.get()
     )
-    doLast {
-        exec { commandLine = listOf("git", "add", "-A") }
-        exec {
-            commandLine = listOf(
-                "git",
-                "commit",
-                "-m",
-                "iOS binary lib for version ${libs.versions.library.version.get()}"
-            )
+
+    pom {
+        name = "KDI Kotlin Dependency Injection"
+        description =
+            "KDI (Kotlin Dependency Injection) allows you to inject dependencies dynamically, without annotations, and with maximum flexibility."
+        inceptionYear = "2025"
+        url = "https://github.com/croccio/KDI-Kotlin-Dependency-Injection"
+
+        licenses {
+            license {
+                name = "MIT"
+                url =
+                    "https://github.com/croccio/KDI-Kotlin-Dependency-Injection?tab=MIT-1-ov-file#readme"
+                distribution =
+                    "https://github.com/croccio/KDI-Kotlin-Dependency-Injection?tab=MIT-1-ov-file#readme"
+            }
         }
-        exec { commandLine = listOf("git", "push", "origin", "main") }
-        exec { commandLine = listOf("git", "tag", libs.versions.library.version.get()) }
+
+        developers {
+            developer {
+                id = "croccio"
+                name = "croccio"
+                url = "https://github.com/croccio"
+            }
+        }
+
+        scm {
+            url = "https://github.com/croccio/KDI-Kotlin-Dependency-Injection.git"
+        }
+    }
+}
+
+tasks.register("createTag") {
+    val libVersion = libs.versions.library.version.get()
+    doLast {
+        exec { commandLine = listOf("git", "tag", libVersion) }
         exec { commandLine = listOf("git", "push", "--tags") }
-        println("version ${libs.versions.library.version.get()} built and published")
-    }
-}
-
-val compilePlatforms by tasks.registering {
-    group = libs.versions.library.group.get()
-    dependsOn(
-        tasks.named("compileKotlinIosArm64"),
-        tasks.named("compileKotlinIosX64"),
-        tasks.named("compileKotlinIosSimulatorArm64"),
-        tasks.named("compileReleaseKotlinAndroid")
-    )
-    doLast {
-        println("Finished compilation")
     }
 }
