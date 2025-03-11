@@ -1,3 +1,7 @@
+![Github Actions](https://github.com/croccio/KDI-Kotlin-Dependency-Injection/actions/workflows/Run%20tests.yml/badge.svg)
+![Github Actions](https://github.com/croccio/KDI-Kotlin-Dependency-Injection/actions/workflows/Publish%20version.yml/badge.svg)
+[![MIT](https://img.shields.io/github/license/croccio/KDI-Kotlin-Dependency-Injection)](https://github.com/croccio/KDI-Kotlin-Dependency-Injection/blob/main/LICENSE.txt)
+
 # KDI - Kotlin Dependency Injection 🚀
 KDI (Kotlin Dependency Injection) allows you to inject dependencies dynamically, without annotations, and with maximum flexibility.
 
