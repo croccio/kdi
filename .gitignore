@@ -1,0 +1,74 @@
+# General
+.DS_Store
+.idea/
+*.iml
+*.ipr
+*.iws
+out/
+build/
+*.log
+*.swp
+*.swo
+*.swn
+local.properties
+node_modules/
+package-lock.json
+yarn.lock
+
+# Gradle
+.gradle/
+gradle-app.setting
+!gradle-wrapper.jar
+
+# Kotlin/Java
+*.class
+*.jar
+*.war
+*.ear
+*.kotlin_metadata
+.kotlin
+
+# Android
+*.apk
+*.ap_
+*.aab
+*.dex
+*.so
+*.o
+*.obj
+*.cache
+*.cxx
+*.hprof
+*.rs
+/captures/
+/outputs/
+.externalNativeBuild
+.cxx
+.ndk
+/intermediates/
+generated/
+test-results/
+test-output/
+
+# iOS
+iosApp/Pods/
+iosApp/.swiftpm/
+iosApp/.package.resolved
+iosApp/xcuserdata/
+iosApp/DerivedData/
+iosApp/build/
+iosApp/*.xcodeproj/project.xcworkspace/
+iosApp/*.xcodeproj/xcuserdata/
+iosApp/*.xcodeproj/xcshareddata/
+
+# Web
+*.cache/
+public/
+dist/
+out/
+
+# JetBrains specific
+.idea/
+*.ipr
+*.iws
+*.iml
