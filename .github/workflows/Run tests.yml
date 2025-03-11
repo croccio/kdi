@@ -13,8 +13,6 @@ jobs:
     name: Run tests
     runs-on: macos-latest
     timeout-minutes: 90
-    env:
-      DEVELOPER_DIR: /Applications/Xcode_14.2.app/Contents/Developer
 
     steps:
       - name: Checkout
@@ -33,21 +31,27 @@ jobs:
         run: chmod +x gradlew
 
       - name: Run Android Tests
-        run:  ./gradlew shared:testReleaseUnitTest
+        run: ./gradlew shared:testReleaseUnitTest
+
+      - name: Install Xcode Command Line Tools
+        run: sudo xcode-select --install || true
+
+      - name: Select Xcode Version
+        run: sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
 
       - name: Run iOS Tests
-        run:  ./gradlew shared:iosX64Test
+        run: ./gradlew shared:iosX64Test
 
       - if: github.event_name == 'pull_request'
         name: Create code coverage
-        run:  ./gradlew shared:koverXmlReport
+        run: ./gradlew shared:koverXmlReport
 
       - if: github.event_name == 'pull_request'
         name: Add coverage report to PR
         id: kover
         uses: mi-kas/kover-report@v1
         with:
-          path: ${{ github.workspace }}/shared/build/reports/kover/xml/report.xml
+          path: ${{ github.workspace }}/shared/build/reports/kover/report.xml
           token: ${{ secrets.GITHUB_TOKEN }}
           title: Code Coverage
           update-comment: true
