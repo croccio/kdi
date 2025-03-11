@@ -7,7 +7,7 @@ plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.kotlinCocoapods)
     alias(libs.plugins.androidLibrary)
-    id("kover")
+    alias(libs.plugins.kover)
     id("maven-publish")
 }
 
@@ -45,7 +45,7 @@ kotlin {
         }
         publishDir = rootProject.file("./")
     }
-    
+
     sourceSets {
         commonMain.dependencies {
             //put your multiplatform dependencies here
@@ -140,7 +140,7 @@ configurations.forEach {
 }
 
 val moveIosPodToRoot by tasks.registering {
-    group = "myGroup"
+    group = libs.versions.library.group.get()
     doLast {
         val releaseDir = rootProject.file(
             "./release"
@@ -158,14 +158,21 @@ tasks.named("podPublishReleaseXCFramework") {
 }
 
 val publishPlatforms by tasks.registering {
-    group = "myGroup"
+    group = libs.versions.library.group.get()
     dependsOn(
         tasks.named("publishAndroidReleasePublicationToGithubRepository"),
         tasks.named("podPublishReleaseXCFramework")
     )
     doLast {
         exec { commandLine = listOf("git", "add", "-A") }
-        exec { commandLine = listOf("git", "commit", "-m", "iOS binary lib for version ${libs.versions.library.version.get()}") }
+        exec {
+            commandLine = listOf(
+                "git",
+                "commit",
+                "-m",
+                "iOS binary lib for version ${libs.versions.library.version.get()}"
+            )
+        }
         exec { commandLine = listOf("git", "push", "origin", "main") }
         exec { commandLine = listOf("git", "tag", libs.versions.library.version.get()) }
         exec { commandLine = listOf("git", "push", "--tags") }
@@ -174,7 +181,7 @@ val publishPlatforms by tasks.registering {
 }
 
 val compilePlatforms by tasks.registering {
-    group = "myGroup"
+    group = libs.versions.library.group.get()
     dependsOn(
         tasks.named("compileKotlinIosArm64"),
         tasks.named("compileKotlinIosX64"),

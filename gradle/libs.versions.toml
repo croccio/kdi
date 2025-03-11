@@ -6,7 +6,7 @@ android-minSdk = "24"
 android-targetSdk = "35"
 library-group = "it.croccio.kdi"
 library-version = "0.0.1"
-kover = "0.6.1"
+kover = "0.9.1"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
