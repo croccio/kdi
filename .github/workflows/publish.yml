@@ -7,6 +7,7 @@ env:
   MYUSER: ${{ vars.MYUSER }}
   MYEMAIL: ${{ vars.MYEMAIL }}
   MYPAT: ${{ secrets.MYPAT }}
+
 jobs:
   test:
     needs: test
