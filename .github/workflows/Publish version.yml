@@ -42,8 +42,11 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      - name: Publish version
-        run:  ./gradlew publishAllPublicationsToGithubPackagesRepository
+      - name: Publish KMP version
+        run:  ./gradlew publish
+
+      - name: Publish Android version
+        run:  ./gradlew publishAndroidReleasePublicationToGithubPackagesRepository
 
       - name: Create tag
         run:  ./gradlew createTag
