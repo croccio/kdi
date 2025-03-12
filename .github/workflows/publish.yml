@@ -1,14 +1,19 @@
-name: Publish version
+name: publish
 
 on:
   workflow_dispatch:
+
 env:
   MYUSER: ${{ vars.MYUSER }}
   MYEMAIL: ${{ vars.MYEMAIL }}
   MYPAT: ${{ secrets.MYPAT }}
 jobs:
-  testflight:
-    name: Publish libraries
+  test:
+    needs: test
+    uses: croccio/kdi/.github/workflows/test.yml@main
+
+  publish:
+    name: publish
     runs-on: macos-latest
     timeout-minutes: 90
 
@@ -35,17 +40,16 @@ jobs:
 
       - name: Github config
         run: |
-            git config --global user.name "${{ env.MYUSER }}"
-            git config --global user.email "${{ env.MYEMAIL }}"
-            git checkout -b main
+          git config --global user.name "${{ env.MYUSER }}"
+          git config --global user.email "${{ env.MYEMAIL }}"
+          git checkout -b main
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
       - name: Publish
-        run:  |
-            ./gradlew publish
-            ./gradlew shared:publish
+        run: |
+          ./gradlew shared:publish
 
       - name: Create tag
-        run:  ./gradlew createTag
+        run: ./gradlew createTag
