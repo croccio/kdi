@@ -43,7 +43,9 @@ jobs:
         run: chmod +x gradlew
 
       - name: Publish
-        run:  ./gradlew publish
+        run:  |
+            ./gradlew publish
+            ./gradlew shared:publish
 
       - name: Create tag
         run:  ./gradlew createTag
