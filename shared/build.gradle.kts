@@ -1,4 +1,4 @@
-import org.gradle.kotlin.dsl.support.kotlinCompilerOptions
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 var androidTarget: String = ""
@@ -55,6 +55,13 @@ kotlin {
             implementation(libs.kotlin.test)
         }
     }
+
+    @OptIn(ExperimentalWasmDsl::class)
+    wasmJs {
+        moduleName = "kdi"
+    }
+
+    jvm("desktop")
 }
 
 android {
