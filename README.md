@@ -1,5 +1,5 @@
-![Github Actions](https://github.com/croccio/kdi/actions/workflows/Run%20tests.yml/badge.svg)
-![Github Actions](https://github.com/croccio/kdi/actions/workflows/Publish%20version.yml/badge.svg)
+[![Github Actions](https://github.com/croccio/kdi/actions/workflows/Run%20tests.yml/badge.svg)](https://github.com/croccio/kdi/actions/workflows/Run%20tests.yml)
+[![Github Actions](https://github.com/croccio/kdi/actions/workflows/Publish%20version.yml/badge.svg)](https://github.com/croccio/kdi/actions/workflows/Publish%20version.yml)
 [![MIT](https://img.shields.io/github/license/croccio/kdi)](https://github.com/croccio/KDI-Kotlin-Dependency-Injection/blob/main/LICENSE.txt)
 
 # KDI - Kotlin Dependency Injection 🚀
