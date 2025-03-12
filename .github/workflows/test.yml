@@ -1,16 +1,16 @@
-name: Run tests
+name: Test
 
 on:
   workflow_dispatch:
   pull_request:
+  workflow_call:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
 jobs:
-  tests:
-    name: Run tests
+  test:
     runs-on: macos-latest
     timeout-minutes: 90
 
@@ -30,17 +30,8 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      - name: Run Android Tests
+      - name: Run Tests
         run: ./gradlew shared:testReleaseUnitTest
-
-      - name: Install Xcode Command Line Tools
-        run: sudo xcode-select --install || true
-
-      - name: Select Xcode Version
-        run: sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
-
-      - name: Run iOS Tests
-        run: ./gradlew shared:iosX64Test
 
       - if: github.event_name == 'pull_request'
         name: Create code coverage
@@ -58,3 +49,6 @@ jobs:
           min-coverage-overall: 80
           min-coverage-changed-files: 80
           coverage-counter-type: LINE
+
+      - name: Clean
+        run: ./gradlew clean

@@ -1,3 +1,4 @@
+import com.vanniktech.maven.publish.SonatypeHost
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
@@ -25,9 +26,17 @@ kotlin {
         }
         publishLibraryVariants("release", "debug")
     }
-    iosX64()
-    iosArm64()
-    iosSimulatorArm64()
+
+    listOf(
+        iosX64(),
+        iosArm64(),
+        iosSimulatorArm64(),
+    ).forEach { iosTarget ->
+        iosTarget.binaries.framework {
+            baseName = "kdi"
+            isStatic = true
+        }
+    }
 
     cocoapods {
         name = "kdi"
@@ -47,21 +56,42 @@ kotlin {
         publishDir = rootProject.file("./")
     }
 
+    @OptIn(ExperimentalWasmDsl::class)
+    wasmJs {
+        moduleName = "kdi"
+        binaries.library()
+    }
+
+    jvm("desktop")
+
+    applyDefaultHierarchyTemplate()
+
     sourceSets {
-        commonMain.dependencies {
-            //put your multiplatform dependencies here
+        val commonMain by getting
+        val wasmJsMain by getting
+        val nativeMain by getting
+        val desktopMain by getting
+        val androidMain by getting
+
+        val jvmMain by creating {
+            dependsOn(commonMain)
         }
+        androidMain.dependsOn(jvmMain)
+        androidMain.dependencies { }
+        commonMain.dependencies { }
+
+        val nonJvmMain by creating {
+            dependsOn(commonMain)
+            nativeMain.dependsOn(this)
+            wasmJsMain.dependsOn(this)
+            dependencies { }
+        }
+        desktopMain.dependsOn(jvmMain)
+        desktopMain.dependencies { }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
         }
     }
-
-    @OptIn(ExperimentalWasmDsl::class)
-    wasmJs {
-        moduleName = "kdi"
-    }
-
-    jvm("desktop")
 }
 
 android {
@@ -81,12 +111,6 @@ android {
             }
         }
     }
-    publishing {
-        singleVariant("release") {
-            withSourcesJar()
-            withJavadocJar()
-        }
-    }
     testOptions {
         unitTests.isReturnDefaultValues = true
     }
@@ -96,53 +120,31 @@ android {
     }
 }
 
-publishing {
-    repositories {
-        maven {
-            name = "githubPackages"
-            url = uri("https://maven.pkg.github.com/croccio/kdi")
-            credentials {
-                username = System.getenv()["MYUSER"]
-                password = System.getenv()["MYPAT"]
-            }
-        }
-    }
-}
-
 mavenPublishing {
-    coordinates(
-        groupId = libs.versions.library.group.get(),
-        artifactId = "kdi",
-        version = libs.versions.library.version.get()
-    )
 
     pom {
-        name = "KDI Kotlin Dependency Injection"
-        description =
-            "KDI (Kotlin Dependency Injection) allows you to inject dependencies dynamically, without annotations, and with maximum flexibility."
+        name = "kdi"
+        description = "KDI (Kotlin Dependency Injection) allows you to inject dependencies dynamically, without annotations, and with maximum flexibility."
         inceptionYear = "2025"
-        url = "https://github.com/croccio/kdi"
-
+        url = "https://github.com/croccio/"
         licenses {
             license {
                 name = "MIT"
-                url =
-                    "https://github.com/croccio/kdi?tab=MIT-1-ov-file#readme"
-                distribution =
-                    "https://github.com/croccio/kdi?tab=MIT-1-ov-file#readme"
+                url = "https://github.com/croccio/kdi/blob/main/LICENSE"
+                distribution = "https://github.com/croccio/kdi/blob/main/LICENSE"
             }
         }
-
         developers {
             developer {
                 id = "croccio"
                 name = "croccio"
-                url = "https://github.com/croccio"
+                url = "https://github.com/croccio/"
             }
         }
-
         scm {
-            url = "https://github.com/croccio/kdi.git"
+            url = "https://github.com/croccio/kdi/"
+            connection = "scm:git:git://github.com/croccio/kdi.git"
+            developerConnection = "scm:git:ssh://git@github.com/croccio/kdi.git"
         }
     }
 }
