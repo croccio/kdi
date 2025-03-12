@@ -32,7 +32,7 @@ kotlin {
     cocoapods {
         name = "kdi"
         summary = ""
-        homepage = "https://github.com/croccio/KDI-Kotlin-Dependency-Injection.git"
+        homepage = "https://github.com/croccio/kdi.git"
         authors = "croccio"
         version = libs.versions.library.version.get()
         ios.deploymentTarget = "14.1"
@@ -42,7 +42,7 @@ kotlin {
             transitiveExport = true
         }
         specRepos {
-            url("https://github.com/croccio/KDI-Kotlin-Dependency-Injection.git")
+            url("https://github.com/croccio/kdi.git")
         }
         publishDir = rootProject.file("./")
     }
@@ -93,7 +93,7 @@ publishing {
     repositories {
         maven {
             name = "githubPackages"
-            url = uri("https://maven.pkg.github.com/croccio/KDI-Kotlin-Dependency-Injection")
+            url = uri("https://maven.pkg.github.com/croccio/kdi")
             credentials {
                 username = System.getenv()["MYUSER"]
                 password = System.getenv()["MYPAT"]
@@ -114,15 +114,15 @@ mavenPublishing {
         description =
             "KDI (Kotlin Dependency Injection) allows you to inject dependencies dynamically, without annotations, and with maximum flexibility."
         inceptionYear = "2025"
-        url = "https://github.com/croccio/KDI-Kotlin-Dependency-Injection"
+        url = "https://github.com/croccio/kdi"
 
         licenses {
             license {
                 name = "MIT"
                 url =
-                    "https://github.com/croccio/KDI-Kotlin-Dependency-Injection?tab=MIT-1-ov-file#readme"
+                    "https://github.com/croccio/kdi?tab=MIT-1-ov-file#readme"
                 distribution =
-                    "https://github.com/croccio/KDI-Kotlin-Dependency-Injection?tab=MIT-1-ov-file#readme"
+                    "https://github.com/croccio/kdi?tab=MIT-1-ov-file#readme"
             }
         }
 
@@ -135,7 +135,7 @@ mavenPublishing {
         }
 
         scm {
-            url = "https://github.com/croccio/KDI-Kotlin-Dependency-Injection.git"
+            url = "https://github.com/croccio/kdi.git"
         }
     }
 }
