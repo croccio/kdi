@@ -8,7 +8,7 @@ import it.croccio.kdi.injectable.Instance
 internal val injections = mutableMapOf<String, Instance<*, *>>()
 
 @PublishedApi
-internal inline fun <reified T> findInjection(): T where T : Any =
+internal inline fun <reified T> findInjection(): T =
     injections[T::class.toString()]
         ?.run { get() as T }
         ?: throw KDIException(T::class)
@@ -23,6 +23,11 @@ fun <T> inject(vararg modules: T) where T : Module {
         .forEach { module -> module.register() }
 }
 
-inline fun <reified T : Any> injection() =
+inline fun <reified T> injection(): InjectDelegation<T> =
     InjectDelegation<T>(findInjection())
+
+inline fun <reified T> byInjection(): T {
+    val toInject by injection<T>()
+    return toInject
+}
 
