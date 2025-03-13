@@ -121,6 +121,8 @@ android {
 }
 
 mavenPublishing {
+    publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
+    signAllPublications()
 
     pom {
         name = "kdi"

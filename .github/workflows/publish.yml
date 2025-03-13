@@ -38,5 +38,17 @@ jobs:
             ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.SIGNING_PASSWORD }}
             ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.GPG_KEY_CONTENTS }}
 
+      - name: Github credentials
+        uses: extractions/netrc@v1
+        with:
+          machine: github.com
+          username: ${{ env.MYUSER }}
+          password: ${{ env.MYPAT }}
+
+      - name: Github config
+        run: |
+          git config --global user.name "${{ env.MYUSER }}"
+          git config --global user.email "${{ env.MYEMAIL }}"
+
       - name: Create tag
         run: ./gradlew createTag
