@@ -61,5 +61,7 @@ KDI provides multiple ways to inject dependencies:
 - Provide → Creates a new instance every time it's injected.
 - Singleton → Injects the same instance throughout the application.
 - Bind → Maps an interface to a specific implementation.
+- BindSingleton → Maps an interface to the same instance.
+
 This makes dependency management in Kotlin simple, flexible, and annotation-free! 🚀
 New types will be added soon!

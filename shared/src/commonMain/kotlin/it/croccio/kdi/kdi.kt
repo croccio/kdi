@@ -1,4 +1,4 @@
-package it.croccio.ticketshare.library.kdi
+package it.croccio.kdi
 
 import it.croccio.kdi.exception.KDIException
 import it.croccio.kdi.injectable.Instance
@@ -30,4 +30,3 @@ inline fun <reified T> byInjection(): T {
     val toInject by injection<T>()
     return toInject
 }
-

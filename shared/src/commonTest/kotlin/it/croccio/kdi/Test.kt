@@ -1,12 +1,9 @@
 package it.croccio.kdi
 
 import it.croccio.kdi.injectable.Bind
+import it.croccio.kdi.injectable.BindSingleton
 import it.croccio.kdi.injectable.Provide
 import it.croccio.kdi.injectable.Singleton
-import it.croccio.ticketshare.library.kdi.Module
-import it.croccio.ticketshare.library.kdi.byInjection
-import it.croccio.ticketshare.library.kdi.inject
-import it.croccio.ticketshare.library.kdi.injection
 import kotlin.test.Test
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
@@ -23,6 +20,20 @@ class InjectionTests {
         val first: ToInject by injection()
         val second: ToInject by injection()
         val third: ToInject by injection()
+
+        assertNotNull(first)
+        assertNotNull(second)
+        assertNotNull(third)
+        assertTrue { first === second && second === third }
+    }
+
+    @Test
+    fun `WHEN a BIND_SINGLETON is injected THEN the same instance is returned`() {
+        inject(BindSingleton<IToInject, ToInject> { ToInject("A", 1) })
+
+        val first: IToInject by injection()
+        val second: IToInject by injection()
+        val third: IToInject by injection()
 
         assertNotNull(first)
         assertNotNull(second)
