@@ -1,4 +1,4 @@
-package it.croccio.ticketshare.library.kdi
+package it.croccio.kdi
 
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
