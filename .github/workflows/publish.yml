@@ -10,8 +10,12 @@ env:
 
 jobs:
 
+  test:
+    uses: croccio/kdi/.github/workflows/test.yml@main
+
   publish:
     name: publish
+    needs: test
     runs-on: macos-latest
     timeout-minutes: 90
 
