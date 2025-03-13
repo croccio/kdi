@@ -10,12 +10,8 @@ env:
 
 jobs:
 
-  test:
-    uses: croccio/kdi/.github/workflows/test.yml@main
-
   publish:
     name: publish
-    needs: test
     runs-on: macos-latest
     timeout-minutes: 90
 
@@ -24,23 +20,30 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v1
 
-      - name: Set up JDK 17
-        uses: actions/setup-java@v2
+      - name: Github credentials
+        uses: extractions/netrc@v1
         with:
-          java-version: '17'
-          distribution: 'adopt'
+          machine: github.com
+          username: ${{ env.MYUSER }}
+          password: ${{ env.MYPAT }}
 
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
+      - name: Github config
+        run: |
+          git config --global user.name "${{ env.MYUSER }}"
+          git config --global user.email "${{ env.MYEMAIL }}"
 
-      - name: Publish to MavenCentral
-        run: ./gradlew publishAndReleaseToMavenCentral --no-configuration-cache
-        env:
-            ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
-            ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
-            ORG_GRADLE_PROJECT_signingInMemoryKeyId: ${{ secrets.SIGNING_KEY_ID }}
-            ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.SIGNING_PASSWORD }}
-            ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.GPG_KEY_CONTENTS }}
+      - name: Github credentials
+        uses: extractions/netrc@v1
+        with:
+          machine: github.com
+          username: ${{ secrets.MYUSER }}
+          password: ${{ secrets.MYPAT }}
+
+      - name: Github config
+        run: |
+          git config --global user.name "${{ env.MYUSER }}"
+          git config --global user.email "YOUREMAIL@YOURDOMAIN.COM"
+          git checkout -b main
 
       - name: Create tag
         run: ./gradlew createTag
