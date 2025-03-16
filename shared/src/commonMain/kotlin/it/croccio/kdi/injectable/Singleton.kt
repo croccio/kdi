@@ -4,7 +4,7 @@ class Singleton<T>(
     factory: () -> T,
 ) : Instance<T, T> {
 
-    private var entity: T = factory()
+    private val entity: T by lazy { factory() }
 
     override fun get(): T = entity
 
